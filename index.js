@@ -27,21 +27,37 @@ async function run() {
 
     const menuCollection = client.db("Dhaka-Rest-DB").collection("menu");
     const reviewsCollection = client.db("Dhaka-Rest-DB").collection("reviews");
+    const cartCollection = client.db("Dhaka-Rest-DB").collection("carts");
 
     //------------------------------Menu-----------------------
-    app.get('/menu', async (req, res) => {
+    app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.send(result);
     });
 
-
     //--------------------reviews-----------------
-    app.get('/reviews', async (req, res) => {
+    app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
     });
     //--------------------reviews-----------------
-    
+
+    //--------------------Carts-----------------
+    //get cart item
+    app.get("/carts", async (req, res) => {
+      // const email = req.query.email;
+      // const query = { email: email };
+      const result = await cartCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/carts", async (req, res) => {
+      const cartItem = req.body;
+      const result = await cartCollection.insertOne(cartItem);
+      res.send(result);
+    });
+
+    //--------------------Carts-----------------
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -54,14 +70,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
-
-
-
-
-
-
-
 
 app.get("/", (req, res) => {
   res.send("server is running");
