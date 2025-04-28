@@ -25,9 +25,31 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const userCollection = client.db("Dhaka-Rest-DB").collection("users");
     const menuCollection = client.db("Dhaka-Rest-DB").collection("menu");
     const reviewsCollection = client.db("Dhaka-Rest-DB").collection("reviews");
     const cartCollection = client.db("Dhaka-Rest-DB").collection("carts");
+
+
+
+  //------------------------------User-----------------------
+  app.post('/users', async (req, res) => {
+    const user = req.body;
+    const query = { email: user.email }
+    const existingUser = await userCollection.findOne(query);
+    if (existingUser) {
+      return res.send({ message: 'user already exists', insertedId: null })
+    }
+    const result = await userCollection.insertOne(user);
+    res.send(result);
+  });
+  //------------------------------User-----------------------
+
+
+
+
+
+
 
     //------------------------------Menu-----------------------
     app.get("/menu", async (req, res) => {
