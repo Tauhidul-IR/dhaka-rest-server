@@ -163,6 +163,39 @@ app.patch('/users/admin/:id',verifyToken, verifyAdmin, async (req, res) => {
     });
 
 
+    app.delete('/menu/:id', verifyToken, verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await menuCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    app.get('/menu/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await menuCollection.findOne(query);
+      res.send(result);
+    })
+
+      app.patch('/menu/:id', async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      console.log(id)
+      const filter = { _id: new ObjectId(id) }
+      const updatedDoc = {
+        $set: {
+          name: item.name,
+          category: item.category,
+          price: item.price,
+          recipe: item.recipe,
+          image: item.image
+        }
+      }
+
+      const result = await menuCollection.updateOne(filter, updatedDoc)
+      res.send(result);
+    })
+
     
 
     //--------------------reviews-----------------
