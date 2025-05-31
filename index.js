@@ -46,7 +46,7 @@ app.post('/jwt', async (req, res) => {
 
       // middleWare ----- verifytoken 
     const verifyToken = (req, res, next) => {
-      console.log('inside verify token', req.headers.authorization);
+      // console.log('inside verify token', req.headers.authorization);
       if (!req.headers.authorization) {
         return res.status(401).send({ message: 'unauthorized access' });
       }
@@ -156,12 +156,25 @@ app.patch('/users/admin/:id',verifyToken, verifyAdmin, async (req, res) => {
       res.send(result);
     });
 
+    app.post('/menu', verifyToken, verifyAdmin, async (req, res) => {
+      const item = req.body;
+      const result = await menuCollection.insertOne(item);
+      res.send(result);
+    });
+
+
+    
+
     //--------------------reviews-----------------
     app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
     });
     //--------------------reviews-----------------
+
+
+
+
 
     //--------------------Carts-----------------
     //get cart item
