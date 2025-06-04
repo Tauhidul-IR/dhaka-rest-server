@@ -31,6 +31,7 @@ async function run() {
     const menuCollection = client.db("Dhaka-Rest-DB").collection("menu");
     const reviewsCollection = client.db("Dhaka-Rest-DB").collection("reviews");
     const cartCollection = client.db("Dhaka-Rest-DB").collection("carts");
+    const paymentsCollection = client.db("Dhaka-Rest-DB").collection("payments");
 
     // jwt related API
     app.post("/jwt", async (req, res) => {
@@ -225,6 +226,34 @@ async function run() {
         clientSecret: paymentIntent.client_secret
       });
     });
+
+
+    app.post('/payments',async(req,res)=>{
+      const payment = req.body;
+      const paymentResult = await paymentsCollection.insertOne(payment);
+
+      //delete each item from the cart
+      console.log('payment info', payment);
+      const query = {_id: {
+        $in: payment.cartIds.map(id => new ObjectId(id))
+      }}
+
+      const deleteResult = await cartCollection.deleteMany(query);
+      res.send({paymentResult,deleteResult});
+    })
+
+
+    app.get('/payments/:email', async (req, res) => {
+      const query = { email: req.params.email }
+      // if (req.params.email !== req.decoded.email) {
+      //   return res.status(403).send({ message: 'forbidden access' });
+      // }
+      const result = await paymentsCollection.find(query).toArray();
+      res.send(result);
+    })
+
+    
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
