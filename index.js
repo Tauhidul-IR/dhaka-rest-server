@@ -243,6 +243,29 @@ async function run() {
     })
 
 
+
+    // stats or analytics
+    app.get('/admin-stats',  async (req, res) => {
+      const users = await userCollection.estimatedDocumentCount();
+      const menuItems = await menuCollection.estimatedDocumentCount();
+      const orders = await paymentsCollection.estimatedDocumentCount();
+
+      // const payments = await paymentsCollection.find().toArray();
+      // const revenue = payments.reduce((total, payment) => total + payment.price,0);
+
+      res.send({
+        users,
+        menuItems,
+        orders,
+        revenue
+      })
+    })
+
+
+
+
+
+
     app.get('/payments/:email', async (req, res) => {
       const query = { email: req.params.email }
       // if (req.params.email !== req.decoded.email) {
